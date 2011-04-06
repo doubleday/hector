@@ -7,9 +7,8 @@ import me.prettyprint.cassandra.connection.LoadBalancingPolicy;
 import me.prettyprint.cassandra.connection.NodeAutoDiscoverService;
 import me.prettyprint.cassandra.connection.RoundRobinBalancingPolicy;
 import me.prettyprint.cassandra.connection.HostTimeoutTracker;
+import me.prettyprint.cassandra.service.clock.MicrosecondsSyncClockResolution;
 import me.prettyprint.hector.api.ClockResolution;
-import me.prettyprint.hector.api.factory.HFactory;
-
 
 public final class CassandraHostConfigurator implements Serializable {
   // update this if you make changes
@@ -33,7 +32,7 @@ public final class CassandraHostConfigurator implements Serializable {
   private int retryDownedHostsDelayInSeconds = CassandraHostRetryService.DEF_RETRY_DELAY;
   private int autoDiscoveryDelayInSeconds = NodeAutoDiscoverService.DEF_AUTO_DISCOVERY_DELAY;
   private LoadBalancingPolicy loadBalancingPolicy = new RoundRobinBalancingPolicy();
-  public static final ClockResolution DEF_CLOCK_RESOLUTION = HFactory.createClockResolution(ClockResolution.MICROSECONDS_SYNC);
+  public static final ClockResolution DEF_CLOCK_RESOLUTION = new MicrosecondsSyncClockResolution();
   private int hostTimeoutCounter = HostTimeoutTracker.DEF_TIMEOUT_COUNTER;
   private int hostTimeoutWindow = HostTimeoutTracker.DEF_TIMEOUT_WINDOW;
   private int hostTimeoutSuspensionDurationInSeconds = HostTimeoutTracker.DEF_NODE_SUSPENSION_DURATION_IN_SECONDS;
@@ -132,13 +131,6 @@ public final class CassandraHostConfigurator implements Serializable {
 
   public int getRetryDownedHostsDelayInSeconds() {
     return retryDownedHostsDelayInSeconds;
-  }
-
-  /**
-   * @param resolutionString one of "SECONDS", "MILLISECONDS", "MICROSECONDS" or "MICROSECONDS_SYNC"
-   */
-  public void setClockResolution(String resolutionString) {
-    clockResolution = HFactory.createClockResolution(resolutionString);
   }
 
   @Override
